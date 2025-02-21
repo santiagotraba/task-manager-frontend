@@ -9,6 +9,10 @@ Interfaz de usuario para la aplicación de gestión de tareas. Permite crear, le
 - Axios
 - React Router
 
+# Getting Started with Create React App
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 ## Available Scripts
 
 In the project directory, you can run:
