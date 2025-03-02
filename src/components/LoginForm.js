@@ -8,17 +8,27 @@ const LoginForm = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  // Obtén el token de localStorage
+  const token = localStorage.getItem('token');
+
+  // Configura Axios para incluir el token en todas las solicitudes
+  if (token) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/api/auth/login', { username, password })
+    axios.post('http://localhost:5000/api/auth/login', { username, password }, {
+      withCredentials: true,
+    })
       .then(response => {
-        localStorage.setItem('token', response.data.token); // Guardar el token en localStorage
+        console.log('Respuesta del servidor:', response.data); // Debe mostrar el token
+        localStorage.setItem('token', response.data.token);
         onLogin();
-        navigate('/tasks'); // Redirigir al usuario a la página de tareas
+        navigate('/tasks');
       })
       .catch(error => {
-        console.error(error);
+        console.error('Error completo:', error.response); // Depuración
         setError('Invalid credentials');
       });
   };
