@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { ChakraProvider } from '@chakra-ui/react';
+import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
+import { ChakraProvider, Button } from '@chakra-ui/react';
 import TaskList from './components/TaskList';
 import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
@@ -35,7 +35,13 @@ const App = () => {
     <ChakraProvider>
       <Router>
         <div>
-          <a href="https://reactjs.org">Learn React</a> {/* Agregado para que la prueba pase */}
+          <nav>
+            <Link to="/register">
+              <Button colorScheme="teal" variant="outline">
+                Registrarse
+              </Button>
+            </Link>
+          </nav>
         </div>
         <Routes>
           <Route path="/login" element={<LoginForm onLogin={handleLogin} />} />
