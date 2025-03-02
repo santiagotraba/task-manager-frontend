@@ -13,7 +13,7 @@ const LoginForm = ({ onLogin }) => {
     e.preventDefault();
     axios.post('http://localhost:5000/api/auth/login', { username, password })
       .then(response => {
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('token', response.data.token); // Guardar el token en localStorage
         onLogin();
         navigate('/tasks'); // Redirigir al usuario a la página de tareas
       })

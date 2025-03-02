@@ -19,8 +19,11 @@ const RegisterForm = () => {
         navigate('/login'); // Redirigir al usuario a la página de inicio de sesión
       })
       .catch(error => {
-        console.error(error);
-        setError('Error registering user');
+        if (error.response && error.response.status === 400) {
+          setError('Username already exists'); // Mensaje específico para nombre de usuario duplicado
+        } else {
+          setError('Error registering user'); // Mensaje genérico para otros errores
+        }
         setSuccess('');
       });
   };

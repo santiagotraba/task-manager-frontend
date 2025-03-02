@@ -10,64 +10,35 @@ import {
   Textarea,
   Select,
   Stack,
-  useToast,
 } from "@chakra-ui/react";
-
 import AddTaskForm from "./AddTaskForm";
+import { toast } from 'react-toastify'; // Importa toast de react-toastify
 
 const TaskList = ({ onLogout }) => {
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [editingDescription, setEditingDescription] = useState("");
-  const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [newTaskDescription, setNewTaskDescription] = useState("");
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
   const [errors, setErrors] = useState({});
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("date");
   const [tasks, setTasks] = useState([]);
-  const toast = useToast();
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found");
-        return;
-      }
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/tasks",
-          config
-        );
-        if (response && response.data) {
-          setTasks(response.data);
-        } else {
-          throw new Error("No tasks data found");
-        }
-      } catch (error) {
-        console.error(
-          "Error fetching tasks:",
-          error.response ? error.response.data : error.message
-        );
-        if (error.response && error.response.data.error === "Invalid token") {
-          onLogout();
-        }
-        toast({
-          title: "Error",
-          description: "Error fetching tasks",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
+        const response = await axios.get('http://localhost:5000/api/tasks', {
+          headers: { Authorization: `Bearer ${localStorage.token}` },
         });
+        setTasks(response.data);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+        toast.error("Error al obtener las tareas"); // Usa toast.error aquí
       }
     };
 
     fetchTasks();
-  }, []);
+  }, []); // Elimina toast de las dependencias
 
   const toggleTaskCompletion = async (taskId, completed) => {
     const token = localStorage.getItem("token");
@@ -77,31 +48,21 @@ const TaskList = ({ onLogout }) => {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/tasks/${taskId}`,
-        { completed: !completed },
+        { completed: !completed }, // Cambia el estado de completado
         config
       );
       setTasks(
         tasks.map((task) => (task._id === taskId ? response.data : task))
       );
-      toast({
-        title: "Tarea actualizada",
-        description: "El estado de la tarea ha sido actualizado.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.success(
+        `Tarea marcada como ${!completed ? "completada" : "pendiente"}` // Mensaje dinámico
+      );
     } catch (error) {
       console.error(
         "Error toggling task completion:",
         error.response ? error.response.data : error.message
       );
-      toast({
-        title: "Error",
-        description: "No se pudo actualizar el estado de la tarea.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error("No se pudo actualizar el estado de la tarea.");
     }
   };
 
@@ -113,25 +74,13 @@ const TaskList = ({ onLogout }) => {
     try {
       await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, config);
       setTasks(tasks.filter((task) => task._id !== taskId));
-      toast({
-        title: "Tarea eliminada",
-        description: "La tarea ha sido eliminada.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.success("La tarea ha sido eliminada.");
     } catch (error) {
       console.error(
         "Error deleting task:",
         error.response ? error.response.data : error.message
       );
-      toast({
-        title: "Error",
-        description: "No se pudo eliminar la tarea.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error("No se pudo eliminar la tarea.");
     }
   };
 
@@ -173,67 +122,13 @@ const TaskList = ({ onLogout }) => {
       setEditingTitle("");
       setEditingDescription("");
       setErrors({});
-      toast({
-        title: "Tarea actualizada",
-        description: "La tarea ha sido actualizada.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.success("La tarea ha sido actualizada.");
     } catch (error) {
       console.error(
         "Error saving task:",
         error.response ? error.response.data : error.message
       );
-      toast({
-        title: "Error",
-        description: "No se pudo actualizar la tarea.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
-
-  const addTask = async () => {
-    const errors = validate();
-    if (Object.keys(errors).length > 0) {
-      setErrors(errors);
-      return;
-    }
-
-    const token = localStorage.getItem("token");
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/tasks",
-        { title: newTaskTitle, description: newTaskDescription },
-        config
-      );
-      setTasks([...tasks, response.data]);
-      setNewTaskTitle("");
-      setNewTaskDescription("");
-      toast({
-        title: "Tarea agregada",
-        description: "La nueva tarea ha sido agregada.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error(
-        "Error adding task:",
-        error.response ? error.response.data : error.message
-      );
-      toast({
-        title: "Error",
-        description: "No se pudo agregar la tarea.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error("No se pudo actualizar la tarea.");
     }
   };
 
@@ -252,25 +147,13 @@ const TaskList = ({ onLogout }) => {
         tasks.map((task) => (task._id === taskId ? response.data : task))
       );
       setNewSubtaskTitle("");
-      toast({
-        title: "Subtarea agregada",
-        description: "La nueva subtarea ha sido agregada.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.success("La nueva subtarea ha sido agregada.");
     } catch (error) {
       console.error(
         "Error adding subtask:",
         error.response ? error.response.data : error.message
       );
-      toast({
-        title: "Error",
-        description: "No se pudo agregar la subtarea.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error("No se pudo agregar la subtarea.");
     }
   };
 
@@ -279,57 +162,42 @@ const TaskList = ({ onLogout }) => {
     const config = {
       headers: { Authorization: `Bearer ${token}` },
     };
+  
+    console.log("Task ID:", taskId); // Depuración
+    console.log("Subtask ID:", subtaskId); // Depuración
+  
     try {
       const response = await axios.put(
         `http://localhost:5000/api/tasks/${taskId}/subtasks/${subtaskId}`,
-        { completed: !completed },
+        { completed: !completed }, // Envía el nuevo estado de la subtarea
         config
       );
-  
-      console.log("Respuesta de la API:", response.data); // Verifica la respuesta de la API
   
       setTasks(
         tasks.map((task) => {
           if (task._id === taskId) {
             const updatedSubtasks = task.subtasks.map((subtask) => {
               if (subtask._id === subtaskId) {
-                return response.data; // Subtarea actualizada
+                return response.data.subtasks.find((st) => st._id === subtaskId); // Actualiza la subtarea
               }
-              return subtask; // Otras subtareas
+              return subtask;
             });
-  
-            console.log("Subtareas actualizadas:", updatedSubtasks); // Verifica las subtareas actualizadas
-  
             return {
               ...task,
               subtasks: updatedSubtasks,
             };
           }
-          return task; // Otras tareas
+          return task;
         })
       );
   
-      console.log("Tareas actualizadas:", tasks); // Verifica las tareas actualizadas
-  
-      toast({
-        title: "Subtarea actualizada",
-        description: "El estado de la subtarea ha sido actualizado.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.success("El estado de la subtarea ha sido actualizado.");
     } catch (error) {
       console.error(
         "Error toggling subtask completion:",
         error.response ? error.response.data : error.message
       );
-      toast({
-        title: "Error",
-        description: "No se pudo actualizar el estado de la subtarea.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error("No se pudo actualizar el estado de la subtarea.");
     }
   };
 
@@ -368,20 +236,6 @@ const TaskList = ({ onLogout }) => {
       </Flex>
 
       <AddTaskForm onTaskAdded={onTaskAdded} />
-
-      {/* <Stack spacing={4}>
-        <Input
-          placeholder="Nuevo título de tarea"
-          value={newTaskTitle}
-          onChange={(e) => setNewTaskTitle(e.target.value)}
-        />
-        <Textarea
-          placeholder="Nueva descripción de tarea"
-          value={newTaskDescription}
-          onChange={(e) => setNewTaskDescription(e.target.value)}
-        />
-        <Button onClick={addTask} colorScheme="teal">Agregar tarea</Button>
-      </Stack> */}
 
       <Box mt={6}>
         {sortedTasks.map((task) => (
@@ -428,13 +282,16 @@ const TaskList = ({ onLogout }) => {
               <Box>
                 <Text fontWeight="bold">{task.title}</Text>
                 <Text>{task.description}</Text>
+                <Text fontSize="sm" color="gray.500">
+                  Creada el: {new Date(task.createdAt).toLocaleDateString()}
+                </Text>
                 <Checkbox
                   isChecked={task.completed}
                   onChange={() =>
                     toggleTaskCompletion(task._id, task.completed)
                   }
                 >
-                  Completada
+                  {task.completed ? "Completada" : "Pendiente"} {/* Etiqueta dinámica */}
                 </Checkbox>
                 <Button
                   onClick={() => startEditing(task)}
