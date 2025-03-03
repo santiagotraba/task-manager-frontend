@@ -28,7 +28,7 @@ const TaskList = ({ onLogout }) => {
     const fetchTasks = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/tasks', {
-          headers: { Authorization: `Bearer ${localStorage.token}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         setTasks(response.data);
       } catch (error) {

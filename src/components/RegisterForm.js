@@ -12,7 +12,7 @@ const RegisterForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:5000/api/auth/register', { username, password })
+    axios.post('https://task-manager-backend-vpab.onrender.com/api/auth/register', { username, password })
       .then(response => {
         setSuccess('User registered successfully');
         setError('');
@@ -47,7 +47,10 @@ const RegisterForm = () => {
       />
       {error && <Text color="red.500" mb={2}>{error}</Text>}
       {success && <Text color="green.500" mb={2}>{success}</Text>}
-      <Button type="submit" colorScheme="teal">Register</Button>
+      <Button type="submit" colorScheme="teal" mb={2}>Register</Button>
+      <Button variant="link" onClick={() => navigate('/login')}>
+        ¿Ya tienes una cuenta? Inicia sesión
+      </Button>
     </Box>
   );
 };
