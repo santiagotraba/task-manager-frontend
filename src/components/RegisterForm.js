@@ -13,19 +13,21 @@ const RegisterForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('https://task-manager-backend-vpab.onrender.com/api/auth/register', { username, password })
-      .then(response => {
-        setSuccess('User registered successfully');
-        setError('');
-        navigate('/login'); // Redirigir al usuario a la página de inicio de sesión
-      })
-      .catch(error => {
-        if (error.response && error.response.status === 400) {
-          setError('Username already exists'); // Mensaje específico para nombre de usuario duplicado
-        } else {
-          setError('Error registering user'); // Mensaje genérico para otros errores
-        }
-        setSuccess('');
-      });
+  .then(response => {
+    console.log('Respuesta del servidor:', response.data); // Depuración
+    setSuccess('User registered successfully');
+    setError('');
+    navigate('/login');
+  })
+  .catch(error => {
+    console.error('Error completo:', error.response); // Depuración
+    if (error.response && error.response.status === 400) {
+      setError('Username already exists');
+    } else {
+      setError('Error registering user');
+    }
+    setSuccess('');
+  });
   };
 
   return (
