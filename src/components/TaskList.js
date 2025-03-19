@@ -47,7 +47,7 @@ const TaskList = ({ onLogout }) => {
     };
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `https://task-manager-backend-vpab.onrender.com/api/tasks/${taskId}`, // Cambia la URL aquí
         { completed: !completed }, // Cambia el estado de completado
         config
       );
@@ -72,7 +72,7 @@ const TaskList = ({ onLogout }) => {
       headers: { Authorization: `Bearer ${token}` },
     };
     try {
-      await axios.delete(`http://localhost:5000/api/tasks/${taskId}`, config);
+      await axios.delete(`https://task-manager-backend-vpab.onrender.com/api/tasks/${taskId}`, config); // Cambia la URL aquí
       setTasks(tasks.filter((task) => task._id !== taskId));
       toast.success("La tarea ha sido eliminada.");
     } catch (error) {
@@ -111,7 +111,7 @@ const TaskList = ({ onLogout }) => {
     };
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/tasks/${taskId}`,
+        `https://task-manager-backend-vpab.onrender.com/api/tasks/${taskId}`, // Cambia la URL aquí
         { title: editingTitle, description: editingDescription },
         config
       );
@@ -139,7 +139,7 @@ const TaskList = ({ onLogout }) => {
     };
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/tasks/${taskId}/subtasks`,
+        `https://task-manager-backend-vpab.onrender.com/api/tasks/${taskId}/subtasks`, // Cambia la URL aquí
         { title: newSubtaskTitle },
         config
       );
@@ -168,7 +168,7 @@ const TaskList = ({ onLogout }) => {
   
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/tasks/${taskId}/subtasks/${subtaskId}`,
+        `https://task-manager-backend-vpab.onrender.com/api/tasks/${taskId}/subtasks/${subtaskId}`, // Cambia la URL aquí
         { completed: !completed }, // Envía el nuevo estado de la subtarea
         config
       );
