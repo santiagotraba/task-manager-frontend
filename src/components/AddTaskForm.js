@@ -39,14 +39,13 @@ const AddTaskForm = ({ onTaskAdded }) => {
       return;
     }
   
-    axios
-      .post(
-        "http://localhost:5000/api/tasks",
-        { title, description, userId }, // Incluye el userId en la solicitud
-        {
-          headers: { Authorization: `Bearer ${localStorage.token}` },
-        }
-      )
+    axios.post(
+      "https://task-manager-backend-vpab.onrender.com/api/tasks",
+      { title, description, userId },
+      {
+        headers: { Authorization: `Bearer ${localStorage.token}` },
+      }
+    )
       .then((response) => {
         onTaskAdded(response.data);
         setTitle("");
